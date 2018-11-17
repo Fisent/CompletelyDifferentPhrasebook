@@ -2,21 +2,6 @@
 <html lang="en">
 <head>
 
-    <script>
-        var HttpClient = function() {
-            this.get = function(aUrl, aCallback) {
-                var anHttpRequest = new XMLHttpRequest();
-                anHttpRequest.onreadystatechange = function() {
-                    if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
-                        aCallback(anHttpRequest.responseText);
-                }
-
-                anHttpRequest.open( "GET", aUrl, true );
-                anHttpRequest.send( null );
-            }
-        }
-    </script>
-
     <meta charset="UTF-8">
     <title>Translator</title>
 
@@ -36,37 +21,31 @@
             clear: both;
         }
 
-         /* Tooltip container */
-        .tooltip {
+        /* Popup container */
+        .popup {
             position: relative;
             display: inline-block;
-            border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+            cursor: pointer;
         }
 
-        /* Tooltip text */
-        .tooltip .tooltiptext {
+        /* The actual popup (appears on top) */
+        .popup .popuptext {
             visibility: hidden;
-            width: 120px;
+            width: 160px;
             background-color: #555;
             color: #fff;
             text-align: center;
-            padding: 5px 0;
             border-radius: 6px;
-
-            /* Position the tooltip text */
+            padding: 8px 0;
             position: absolute;
             z-index: 1;
             bottom: 125%;
             left: 50%;
-            margin-left: -60px;
-
-            /* Fade in tooltip */
-            opacity: 0;
-            transition: opacity 0.3s;
+            margin-left: -80px;
         }
 
-        /* Tooltip arrow */
-        .tooltip .tooltiptext::after {
+        /* Popup arrow */
+        .popup .popuptext::after {
             content: "";
             position: absolute;
             top: 100%;
@@ -77,14 +56,36 @@
             border-color: #555 transparent transparent transparent;
         }
 
-        /* Show the tooltip text when you mouse over the tooltip container */
-        .tooltip:hover .tooltiptext {
+        /* Toggle this class when clicking on the popup container (hide and show the popup) */
+        .popup .show {
             visibility: visible;
-            opacity: 1;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s
         }
+
+        /* Add animation (fade in the popup) */
+        @-webkit-keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity:1 ;}
+        }
+
     </style>
 </head>
 <body>
+
+<script>
+function show() {
+    var popup = document.getElementById("myPopup");
+    //popup.myPopup.innerHTML = word
+    popup.classList.toggle("show");
+}
+</script>
+
 <h2>Two equal columns</h2>
 
 <div class="row">
@@ -92,9 +93,26 @@
         <h2>Column 1</h2>
 
         {% for word in text %}
-         <div class="tooltip">{{word.org}}
-            <span class="tooltiptext">{{word.translated}}</span>
+
+        <div class="popup" onclick="show{{word.org}}()">{{word.org}}
+            <span class="popuptext" id="myPopup{{word.org}}">{{word.translated}}</span>
          </div>
+
+        <script>
+            function show{{word.org}}() {
+                var popup = document.getElementById("myPopup{{word.org}}");
+
+                var request = new XMLHttpRequest();
+                request.open('GET', 'https://glosbe.com/gapi/translate?from=eng&dest=pol&format=jsonp&phrase={{word.org}}&pretty=true', true);
+                request.onload = function(){
+                    var data = JSON.parse(this.response);
+
+                    popup.textContent = 'data'
+                    popup.classList.toggle("show");
+                }
+                request.send();
+            }
+        </script>
         {% endfor %}
 
     </div>
@@ -104,5 +122,6 @@
           rows="5" cols="33" style="width:99%"></textarea>
     </div>
 </div>
+
 </body>
 </html>
