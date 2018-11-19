@@ -25,3 +25,8 @@ def translate_word(request):
     translated = glosbe.translate(request.GET.get('word'))
 
     return JsonResponse({'translated': translated})
+
+def upload(request):
+    template = loader.get_template('upload.html')
+
+    return HttpResponse(template.render({}, ))
