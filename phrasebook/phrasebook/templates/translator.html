@@ -100,16 +100,18 @@ function show() {
 
         <script>
             function show{{word.org}}() {
+
                 var popup = document.getElementById("myPopup{{word.org}}");
 
                 var request = new XMLHttpRequest();
-                request.open('GET', 'https://glosbe.com/gapi/translate?from=eng&dest=pol&format=jsonp&phrase={{word.org}}&pretty=true', true);
+                request.open('GET', '/translate_word?word={{word.org}}', true);
                 request.onload = function(){
                     var data = JSON.parse(this.response);
-
-                    popup.textContent = 'data'
-                    popup.classList.toggle("show");
+                    console.log(data);
+                    popup.textContent = data['translated'][0];
                 }
+                popup.textContent = '...'
+                popup.classList.toggle("show");
                 request.send();
             }
         </script>
