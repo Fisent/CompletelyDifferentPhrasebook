@@ -8,13 +8,11 @@ def translator(request):
     template = loader.get_template('translator.html')
     text = 'shoe word'
 
-    glosbe = Glosbe(from_lang='eng', dest_lang='pol')
 
     tab = []
 
     for word in text.split():
-        tab.append({'org': word,
-                    'translated': glosbe.translate(word)[0]})
+        tab.append(word)
 
     context = {'text': tab}
     return HttpResponse(template.render(context, request))
